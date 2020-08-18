@@ -99,12 +99,12 @@ namespace ImageGallery.Client
                 options.ClaimActions.DeleteClaim("s_hash");
                 options.ClaimActions.DeleteClaim("auth_time");
                 
-                /* */
+                /* All custom scopes have to be specified here so that they are copied from the token to the ClaimsIdentity and then to User.Claims ------ */
                 options.ClaimActions.MapUniqueJsonKey("role", "role");
                 options.ClaimActions.MapUniqueJsonKey("subscriptionlevel", "subscriptionlevel");
                 options.ClaimActions.MapUniqueJsonKey("country", "country");
                 
-                /* */
+                /* I think this allows it to be accessible via httpcontext.getTokenAsync()  */
                 options.SaveTokens = true;
                 
                 /* So that this middleware will call the UserInfo Endpoint automatically and get the claims listed in the AT. We can of course 
