@@ -235,6 +235,8 @@ namespace ImageGallery.Client.Controllers
             await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
         }
 
+
+        /* -------------------- How to call the userinfo endpoint on-demand --------------------- */
         [Authorize(Policy = "CanOrderFrame")]
         public async Task<IActionResult> OrderFrame()
         {
@@ -244,13 +246,10 @@ namespace ImageGallery.Client.Controllers
 
             if (metaDataResponse.IsError)
             {
-                throw new Exception(
-                    "Problem accessing the discovery endpoint."
-                    , metaDataResponse.Exception);
+                throw new Exception("Problem accessing the discovery endpoint.", metaDataResponse.Exception);
             }
 
-            var accessToken = await HttpContext
-              .GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
+            var accessToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
 
             var userInfoResponse = await idpClient.GetUserInfoAsync(
                new UserInfoRequest
@@ -261,13 +260,10 @@ namespace ImageGallery.Client.Controllers
 
             if (userInfoResponse.IsError)
             {
-                throw new Exception(
-                    "Problem accessing the UserInfo endpoint."
-                    , userInfoResponse.Exception);
+                throw new Exception("Problem accessing the UserInfo endpoint.", userInfoResponse.Exception);
             }
 
-            var address = userInfoResponse.Claims
-                .FirstOrDefault(c => c.Type == "address")?.Value;
+            var address = userInfoResponse.Claims.FirstOrDefault(c => c.Type == "address")?.Value;
 
             return View(new OrderFrameViewModel(address));
         }
