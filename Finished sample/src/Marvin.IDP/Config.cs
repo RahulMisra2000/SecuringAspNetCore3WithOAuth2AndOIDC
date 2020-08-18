@@ -10,26 +10,34 @@ namespace Marvin.IDP
 {
     public static class Config
     {
+        /* Tell IdentityServer4 about all the Identity Scopes (called IdentityResource also) that it should be aware of ----------- */
         public static IEnumerable<IdentityResource> Ids =>
             new IdentityResource[]
             {
+                /* These are some of the built-in identity scopes --------- */
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile(),
                 new IdentityResources.Address(),
+            
+                /* Some custom Identity scopes ---------------------------- */
                 new IdentityResource(
-                    "roles",
+                    "roles",            /* name of the scope */
                     "Your role(s)",
-                    new List<string>() { "role" }),
+                    new List<string>() { "role" }),   /* List of claims belonging to this scope. In this case only one. We just specify the claim's key here. */
+                    
                 new IdentityResource(
                     "country",
                     "The country you're living in",
                     new List<string>() { "country" }),
+            
                 new IdentityResource(
                     "subscriptionlevel",
                     "Your subscription level",
                     new List<string>() { "subscriptionlevel" })
             };
 
+        
+        /* Tell IdentityServer4 about all the API Scopes (called ApiResource also) that it should be aware of ----------- */
         public static IEnumerable<ApiResource> Apis =>
             new ApiResource[]
             {
@@ -42,6 +50,7 @@ namespace Marvin.IDP
                 }
             };
 
+        /* Client Application Registrations here ----------------------------------------- */
         public static IEnumerable<Client> Clients =>
             new Client[]
             {
@@ -53,6 +62,10 @@ namespace Marvin.IDP
                     UpdateAccessTokenClaimsOnRefresh = true,
                     ClientName = "Image Gallery",
                     ClientId = "imagegalleryclient",
+                    ClientSecrets =
+                    {
+                        new Secret("secret".Sha256())
+                    },
                     AllowedGrantTypes = GrantTypes.Code,
                     RequirePkce = true,
                     RedirectUris = new List<string>()
@@ -64,7 +77,7 @@ namespace Marvin.IDP
                         "https://localhost:44389/signout-callback-oidc"
                     },
                     AllowedScopes =
-                    {
+                    {   /* This client application can request any of these scopes -------------------------- */
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.Address,
@@ -72,10 +85,6 @@ namespace Marvin.IDP
                         "imagegalleryapi",
                         "country",
                         "subscriptionlevel"
-                    },
-                    ClientSecrets =
-                    {
-                        new Secret("secret".Sha256())
                     }
                 } };
     }
